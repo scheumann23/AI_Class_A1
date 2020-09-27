@@ -40,6 +40,18 @@ def num_inversions(state):
     invs = [0 if state[i+1] > state[i] else 1 for i in range(len(state)-1)]
     return sum(invs)
 
+def manhattan(state):
+    goal = sorted(state)
+    state = list(state) 
+    #print(goal)
+    #print(state)
+    h2 = 0
+    for i in range(1,len(state)):
+        gl = goal.index(i)
+        st = state.index(i)
+        h2 += (abs(st%ROWS - gl%ROWS) + abs(st//ROWS - gl//ROWS))
+    return h2
+
 # return a list of possible successor states
 def successors(state):
     return [ (shift_row(state, row, dir)) for dir in (-1,1) for row in range(0, ROWS) ] + \
@@ -56,11 +68,13 @@ def solve(initial_board):
     while not fringe.empty():
         priority, data = fringe.get()
         state, route_so_far = data
-        for (succ, move) in successors( state ):
-            if is_goal(succ):
-                return( route_so_far + [move,] )
-                # This is where we can try out different heuristics
-            fringe.put((len(route_so_far) + 1 + num_out_of_order(state), (succ, route_so_far + [move,])))
+        if state not in visited:
+            visited.append(state)
+            for (succ, move) in successors( state ):
+                if is_goal(succ):
+                    return( route_so_far + [move,] )
+                    # This is where we can try out different heuristics
+                fringe.put((len(route_so_far) + 1 + manhattan(succ), (succ, route_so_far + [move,])))
     return False
 
 
@@ -69,6 +83,7 @@ if __name__ == "__main__":
         raise(Exception("Error: expected a board filename"))
 
     start_state = []
+    visited = []
     with open(sys.argv[1], 'r') as file:
         for line in file:
             start_state += [ int(i) for i in line.split() ]
