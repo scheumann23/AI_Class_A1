@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 # solver20.py : 2020 Sliding tile puzzle solver
 #
-# Code by: [PLEASE PUT YOUR NAMES AND USER IDS HERE]
+# Code by: Vishal Bhalla vibhalla, Neelan Scheumann nscheuma, Cody Harris harrcody
 #
 # Based on skeleton code by D. Crandall, September 2020
 #
@@ -30,6 +30,16 @@ def shift_col(state, col, dir):
 def printable_board(board):
     return [ ('%3d ')*COLS  % board[j:(j+COLS)] for j in range(0, ROWS*COLS, COLS) ]
 
+#one possible heuristic
+def num_out_of_order(state):
+    invs = [0 if state[i] == (i+1) else 1 for i in range(len(state))]
+    return sum(invs)
+
+#another possible heuristic
+def num_inversions(state):
+    invs = [0 if state[i+1] > state[i] else 1 for i in range(len(state)-1)]
+    return sum(invs)
+
 # return a list of possible successor states
 def successors(state):
     return [ (shift_row(state, row, dir)) for dir in (-1,1) for row in range(0, ROWS) ] + \
@@ -38,16 +48,19 @@ def successors(state):
 # check if we've reached the goal
 def is_goal(state):
     return sorted(state[:-1]) == list(state[:-1]) 
-    
-# The solver! - using BFS right now
+
+# The solver! - using A*
 def solve(initial_board):
-    fringe = [ (initial_board, []) ]
-    while len(fringe) > 0:
-        (state, route_so_far) = fringe.pop()
+    fringe = PriorityQueue()
+    fringe.put( (0, (initial_board, [])) )
+    while not fringe.empty():
+        priority, data = fringe.get()
+        state, route_so_far = data
         for (succ, move) in successors( state ):
             if is_goal(succ):
                 return( route_so_far + [move,] )
-            fringe.insert(0, (succ, route_so_far + [move,] ) )
+                # This is where we can try out different heuristics
+            fringe.put((len(route_so_far) + 1 + num_out_of_order(state), (succ, route_so_far + [move,])))
     return False
 
 
