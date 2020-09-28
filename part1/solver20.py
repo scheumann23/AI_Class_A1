@@ -43,13 +43,11 @@ def num_inversions(state):
 def manhattan(state):
     goal = sorted(state)
     state = list(state) 
-    #print(goal)
-    #print(state)
     h2 = 0
-    for i in range(1,len(state)):
+    for i in range(1,len(state)+1):
         gl = goal.index(i)
         st = state.index(i)
-        h2 += (abs(st%ROWS - gl%ROWS) + abs(st//ROWS - gl//ROWS))
+        h2 += (abs(st%COLS - gl%COLS) + abs(st//COLS - gl//COLS))
     return h2
 
 # return a list of possible successor states
@@ -75,6 +73,7 @@ def solve(initial_board):
                     return( route_so_far + [move,] )
                     # This is where we can try out different heuristics
                 fringe.put((len(route_so_far) + 1 + manhattan(succ), (succ, route_so_far + [move,])))
+                #print(succ,(len(route_so_far) + 1 ),manhattan(succ),[move,])
     return False
 
 
@@ -97,4 +96,3 @@ if __name__ == "__main__":
     route = solve(tuple(start_state))
     
     print("Solution found in " + str(len(route)) + " moves:" + "\n" + " ".join(route))
-
