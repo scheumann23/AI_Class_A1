@@ -9,6 +9,18 @@
 from queue import PriorityQueue
 import sys
 
+# chooses which cost function to use
+def calc_cost(route, cost_func):
+    if cost_func == 'segments':
+        return segments_cost(route)
+    elif cost_func == 'distance':
+        return distance_cost(route)
+    elif cost_func =='time':
+        return time_cost(route)
+    elif cost_func == 'cycling':
+        return cycling_cost(route)
+        
+  
 #segments cost function
 def segments_cost():
     return
@@ -39,32 +51,35 @@ def successors(state):
         [ (shift_col(state, col, dir)) for dir in (-1,1) for col in range(0, COLS) ]
 
 # check if we've reached the goal
-def is_goal(state):
-    return sorted(state[:-1]) == list(state[:-1]) 
+def is_goal(state, end_city):
+    return state[1][0] == end_city 
 
 # The solver! - using A*
 def solve(route_params):
     fringe = PriorityQueue()
-    #Fringe is (priority, (current city, list of steps, cost))
+    #Fringe is (priority, (current city, route, cost))
     fringe.put((0, (route_params[0], [], 0)))
     visited = []
     while not fringe.empty():
         priority, data = fringe.get()
-        state, route_so_far = data
+        state, route_so_far, cost = data
         if state not in visited:
             visited.append(state)
-            for (succ, move) in successors( state ):
-                if is_goal(succ):
-                    return( route_so_far + [move,] )
+            for (succ, move) in successors(state):
+                if is_goal(succ, route_params[1]):
+                    return(route_so_far.append(move))
                     # This is where we can try out different heuristics
-                fringe.put((len(route_so_far) + 1 + manhattan(succ), (succ, route_so_far + [move,])))
+                fringe.put((calc_cost(route_so_far, route_params[2]) + euclid_dist(succ), (succ, route_so_far.append(move))))
                 #print(succ,(len(route_so_far) + 1 ),manhattan(succ),[move,])
     return False
 
 
 if __name__ == "__main__":
     if(len(sys.argv) != 4):
-        raise(Exception("Error: expected start city, end city, and cost function. No Spaces in Arguments!"))
+        raise(Exception("Error: Expected start city, end city, and cost function. No Spaces in Arguments!"))
+        
+    if(sys.argv[2] not in ['segments', 'distance', 'time', 'cycling', 'statetour']):
+        raise(Exception("Error: Cost function should be one of: segments, distance, time, cycling, statetour"))
         
     start_state = tuple(sys.argv[1:])   
 
