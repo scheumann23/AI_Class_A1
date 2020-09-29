@@ -9,6 +9,30 @@
 from queue import PriorityQueue
 import sys
 
+#segments cost function
+def segments_cost():
+    return
+
+# distance cost function
+def distance_cost():
+    return
+
+# time cost function
+def time_cost():
+    return
+
+# cycling cost function
+def cycling_cost():
+    return
+
+# graph preprocessing for missing cities in long/lat
+def missing_cities():
+    return
+
+# distance between two points, using long/lat
+def euclid_dist():
+    return
+
 # return a list of possible successor states
 def successors(state):
     return [ (shift_row(state, row, dir)) for dir in (-1,1) for row in range(0, ROWS) ] + \
@@ -19,9 +43,11 @@ def is_goal(state):
     return sorted(state[:-1]) == list(state[:-1]) 
 
 # The solver! - using A*
-def solve(initial_board):
+def solve(route_params):
     fringe = PriorityQueue()
-    fringe.put( (0, (initial_board, [])) )
+    #Fringe is (priority, (current city, list of steps, cost))
+    fringe.put((0, (route_params[0], [], 0)))
+    visited = []
     while not fringe.empty():
         priority, data = fringe.get()
         state, route_so_far = data
@@ -37,13 +63,14 @@ def solve(initial_board):
 
 
 if __name__ == "__main__":
-
-    start_state = []
-    visited = []
+    if(len(sys.argv) != 4):
+        raise(Exception("Error: expected start city, end city, and cost function. No Spaces in Arguments!"))
+        
+    start_state = tuple(sys.argv[1:])   
 
     print("Solving...")
     route = solve(tuple(start_state))
     
     #Output [total-segments] [total-miles] [total-hours]  \
     #[total-expected-accidents] [start-city] [city-1] [city-2] ... [end-city]
-    
+    print(route)
