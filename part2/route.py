@@ -54,8 +54,8 @@ def euclid_dist():
 
 # return a list of possible successor states
 def successors(state, edge):
-    match_first = [city[1:4] for city in road if city[0] in state]
-    match_second = [tuple([city[0], city[2], city[3]]) for city in road if city[1] in state]
+    match_first = [city[1:4] for city in edge if city[0] in state]
+    match_second = [tuple([city[0], city[2], city[3]]) for city in edge if city[1] in state]
     return match_first + match_second
 
 # check if we've reached the goal
