@@ -47,8 +47,98 @@ def manhattan(state):
     for i in range(1,len(state)+1):
         gl = goal.index(i)
         st = state.index(i)
-        h2 += (abs(st%COLS - gl%COLS) + abs(st//COLS - gl//COLS))
+        if st//COLS not in (0,3):
+            if st%COLS in (0,4) :
+                if (abs(st%COLS - gl%COLS)) == 4:
+                    h2 += (1 + abs(st//COLS - gl//COLS))
+                elif (abs(st%COLS - gl%COLS)) == 3:
+                    h2 += (2 + abs(st//COLS - gl//COLS))
+                else:
+                   h2 += (abs(st%COLS - gl%COLS) + abs(st//COLS - gl//COLS))
+            elif st%COLS in (1,3):
+                if (abs(st%COLS - gl%COLS)) == 3:
+                    h2 += (2 + abs(st//COLS - gl//COLS))
+                else:
+                   h2 += (abs(st%COLS - gl%COLS) + abs(st//COLS - gl//COLS))
+            else:
+                h2 += (abs(st%COLS - gl%COLS) + abs(st//COLS - gl//COLS))
+        else:
+            if (abs(st//COLS - gl//COLS)) == 3:
+                y = 1
+            else:
+                y = (abs(st//COLS - gl//COLS))
+            if st%COLS in (0,4) :
+                if (abs(st%COLS - gl%COLS)) == 4:
+                    h2 += (1 + y)
+                elif (abs(st%COLS - gl%COLS)) == 3:
+                    h2 += (2 + y)
+                else:
+                   h2 += (abs(st%COLS - gl%COLS) + y)
+            elif st%COLS in (1,3):
+                if (abs(st%COLS - gl%COLS)) == 3:
+                    h2 += (2 + y)
+                else:
+                   h2 += (abs(st%COLS - gl%COLS) + y)
+            else:
+                h2 += (abs(st%COLS - gl%COLS) + y)
     return h2
+
+def num_moves(state):
+    goal = sorted(state)
+    state = list(state)
+    hm = 0
+    vm = 0
+    for i in range(1,len(state)+1):
+        gl = goal.index(i)
+        st = state.index(i)
+        if st//COLS not in (0,3):
+            if st%COLS in (0,4) :
+                if (abs(st%COLS - gl%COLS)) == 4:
+                    hm += 1
+                    vm += abs(st//COLS - gl//COLS)
+                elif (abs(st%COLS - gl%COLS)) == 3:
+                    hm += 2
+                    vm += abs(st//COLS - gl//COLS)
+                else:
+                   hm += abs(st%COLS - gl%COLS)
+                   vm += abs(st//COLS - gl//COLS)
+            elif st%COLS in (1,3):
+                if (abs(st%COLS - gl%COLS)) == 3:
+                    hm += 2
+                    vm += abs(st//COLS - gl//COLS)
+                else:
+                   hm += abs(st%COLS - gl%COLS)
+                   vm += abs(st//COLS - gl//COLS)
+            else:
+                hm += abs(st%COLS - gl%COLS)
+                vm += abs(st//COLS - gl//COLS)
+        else:
+            if (abs(st//COLS - gl//COLS)) == 3:
+                y = 1
+            else:
+                y = (abs(st//COLS - gl//COLS))
+            if st%COLS in (0,4) :
+                if (abs(st%COLS - gl%COLS)) == 4:
+                    hm += 1
+                    vm += y
+                elif (abs(st%COLS - gl%COLS)) == 3:
+                    hm += 2
+                    vm += y
+                else:
+                   hm += abs(st%COLS - gl%COLS)
+                   vm += y 
+            elif st%COLS in (1,3):
+                if (abs(st%COLS - gl%COLS)) == 3:
+                    hm += 2
+                    vm += y
+                else:
+                   hm += abs(st%COLS - gl%COLS)
+                   vm += y 
+            else:
+                hm += abs(st%COLS - gl%COLS)
+                vm += y 
+    return (hm//COLS+vm//ROWS)
+            
 
 # return a list of possible successor states
 def successors(state):
@@ -71,9 +161,9 @@ def solve(initial_board):
             for (succ, move) in successors( state ):
                 if is_goal(succ):
                     return( route_so_far + [move,] )
-                    # This is where we can try out different heuristics
-                fringe.put((len(route_so_far) + 1 + manhattan(succ), (succ, route_so_far + [move,])))
-                #print(succ,(len(route_so_far) + 1 ),manhattan(succ),[move,])
+                # This is where we can try out different heuristics
+                fringe.put((len(route_so_far) + 1 + (num_moves(succ)) , (succ, route_so_far + [move,])))
+
     return False
 
 
