@@ -171,9 +171,7 @@ def solve(route_params):
                 cost_so_far = calc_cost([curr_city, succ[0]], cost_function) + cost
                 fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
                 #fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
-                if curr_city == 'Tacoma,_Washington':
-                    print((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
-    return False
+        return False
 
 
 if __name__ == "__main__":
