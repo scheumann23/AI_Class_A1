@@ -116,8 +116,11 @@ def get_distance_apart(start, end):
         end_lat_long = [coords for coords in gps_data if coords[0] in end]
         end_lat = float(end_lat_long[0][1])
         end_long = float(end_lat_long[0][2])
-        sp_dist = spherical_dist_calc(start_lat, start_long, end_lat, end_long)
-        return sp_dist
+        sp_dist = spherical_dist_calc(start_lat, start_long, end_lat, end_long) - 5
+        if sp_dist > max_segment_length:
+            return shortest_dist
+        else:
+            return sp_dist
     else:
         return shortest_dist
 
@@ -166,8 +169,10 @@ def solve(route_params):
             visited.append(curr_city)
             for succ in successors(curr_city):
                 cost_so_far = calc_cost([curr_city, succ[0]], cost_function) + cost
-                #fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
-                fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                #fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                if curr_city == 'Tacoma,_Washington':
+                    print((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
     return False
 
 
