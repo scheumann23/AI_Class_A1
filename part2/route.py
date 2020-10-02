@@ -40,6 +40,9 @@ def load_data(file_name):
         for line in file:
             data_list.append(tuple(line.split()))
     return data_list
+
+def city_list():
+    return set([city[0] for city in road_segs] + [city[1] for city in road_segs])
   
 #segments cost function
 def segments_cost(route):
@@ -179,6 +182,11 @@ if __name__ == "__main__":
     #Preprocess data
     road_segs = load_data('road-segments.txt')
     gps_data = load_data('city-gps.txt')
+    cities = city_list()
+    if sys.argv[1] not in cities:
+        raise(Exception('Error: \'{}\' not in list of road segments'.format(sys.argv[1])))
+    if sys.argv[2] not in cities:
+        raise(Exception('Error: \'{}\' not in list of road segments'.format(sys.argv[2])))
     #Get list of cities in gps_data for faster processing
     cities_have_gps = [city[0] for city in gps_data]
     #Get the shortest road coming from destination city
@@ -193,8 +201,8 @@ if __name__ == "__main__":
     route = solve(tuple(start_state))
     if route:
         print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), ' ', end='')
-            for city in route:
-                print(city, ' ', end = '')
+        for city in route:
+            print(city, ' ', end = '')
     else:
         print("No viable route between start and end cities")
 
