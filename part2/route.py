@@ -116,7 +116,8 @@ def get_distance_apart(start, end):
         end_lat_long = [coords for coords in gps_data if coords[0] in end]
         end_lat = float(end_lat_long[0][1])
         end_long = float(end_lat_long[0][2])
-        return spherical_dist_calc(start_lat, start_long, end_lat, end_long) - 3
+        sp_dist = spherical_dist_calc(start_lat, start_long, end_lat, end_long)
+        return sp_dist
     else:
         return shortest_dist
 
@@ -124,7 +125,7 @@ def get_distance_apart(start, end):
 # Retrived this code from the following link
 # https://stackoverflow.com/questions/19412462/getting-distance-between-two-points-based-on-latitude-longitude
 def spherical_dist_calc(lat1, lon1, lat2, lon2):
-    R = 3958.8
+    R = 3956
     lat1 = radians(lat1)
     lat2 = radians(lat2)
     lon1 = radians(lon1)
@@ -159,13 +160,14 @@ def solve(route_params):
     while not fringe.empty():
         priority, data = fringe.get()
         curr_city, route_so_far, cost = data
-        for succ in successors(curr_city):
-            if is_goal(succ[0], end_city):
-                return route_so_far + [succ[0]]
-            elif succ[0] not in visited:
-                visited.append(succ[0])
-                cost_so_far = calc_cost(route_so_far + [succ[0]], cost_function)
-                fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+        if is_goal(curr_city, end_city):
+                return route_so_far
+        if curr_city not in visited:
+            visited.append(curr_city)
+            for succ in successors(curr_city):
+                cost_so_far = calc_cost([curr_city, succ[0]], cost_function) + cost
+                #fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
     return False
 
 
