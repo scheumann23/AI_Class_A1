@@ -193,8 +193,9 @@ if __name__ == "__main__":
     route = solve(tuple(start_state))
     if route:
         print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), ' ', end='')
+            for city in route:
+                print(city, ' ', end = '')
     else:
         print("No viable route between start and end cities")
-    for city in route:
-        print(city, ' ', end = '')
+
     print('\n', time.time()-t0)
