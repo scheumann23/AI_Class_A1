@@ -23,7 +23,7 @@ def calc_cost(route, cost_func):
         return cycling_cost(route)
     
 # chooses the hueristic based on input parameters
-def hueristic(start, end, cost_func):
+def hueristic(start, end, route, cost_func):
     if cost_func == 'segments':
         return segments_cost(route) / max_segment_length
     elif cost_func == 'distance':
@@ -63,7 +63,6 @@ def distance_cost(route):
 
 # time cost function
 def time_cost(route):
-    print(route)
     dist = 0
     speed = 0
     if len(route) == 2:
@@ -163,7 +162,7 @@ def solve(route_params):
             elif succ[0] not in visited:
                 visited.append(succ[0])
                 cost_so_far = calc_cost(route_so_far + [succ[0]], cost_function)
-                fringe.put((cost_so_far + hueristic(succ[0], end_city, cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
     return False
 
 
@@ -190,11 +189,13 @@ if __name__ == "__main__":
     speeds = [int(road_data[3]) for road_data in road_segs]
     speeds.sort()
     max_speed = speeds[-1]
-    print(max_speed)
     print("Solving...")
     route = solve(tuple(start_state))
-    
-    #Output [total-segments] [total-miles] [total-hours]  \
-    #[total-expected-accidents] [start-city] [city-1] [city-2] ... [end-city]
-    print("end", route)
-    print(time.time()-t0)
+    if route:
+        print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), ' ', end='')
+            for city in route:
+                print(city, ' ', end = '')
+    else:
+        print("No viable route between start and end cities")
+
+    print('\n', time.time()-t0)
