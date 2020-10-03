@@ -27,9 +27,9 @@ def hueristic(start, end, route, cost_func):
     if cost_func == 'segments':
         return segments_cost(route) / max_segment_length
     elif cost_func == 'distance':
-        return get_distance_apart(start, end)
+        return get_distance_apart(start, end) * 0.25
     elif cost_func =='time':
-        return get_distance_apart(start, end) / max_speed
+        return (get_distance_apart(start, end) * 0.25) / max_speed
     elif cost_func == 'cycling':
         return get_distance_apart(start, end) * 0.000001 * max_speed
 
@@ -169,6 +169,8 @@ def solve(route_params):
             visited.append(curr_city)
             for succ in successors(curr_city):
                 cost_so_far = calc_cost([curr_city, succ[0]], cost_function) + cost
+                #print((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                #fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
                 fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
     return False
 
