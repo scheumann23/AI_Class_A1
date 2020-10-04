@@ -182,7 +182,10 @@ if __name__ == "__main__":
         
     if(sys.argv[3] not in ['segments', 'distance', 'time', 'cycling', 'statetour']):
         raise(Exception("Error: Cost function should be one of: segments, distance, time, cycling, statetour"))
-        
+
+    if(sys.argv[1] == sys.argv[2]):
+        raise(Exception("Error: Start and End points can not be the same"))
+         
     start_state = tuple(sys.argv[1:])  
     
     #Preprocess data
