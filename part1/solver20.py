@@ -147,7 +147,7 @@ def successors(state):
 
 # check if we've reached the goal
 def is_goal(state):
-    return sorted(state[:-1]) == list(state[:-1]) 
+    return sorted(state[:]) == list(state[:]) 
 
 # The solver! - using A*
 def solve(initial_board):
