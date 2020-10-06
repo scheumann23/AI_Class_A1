@@ -25,13 +25,45 @@ def calc_cost(route, cost_func):
 # chooses the hueristic based on input parameters
 def hueristic(start, end, route, cost_func):
     if cost_func == 'segments':
-        return segments_cost(route) / max_segment_length
+        return get_distance_apart(start, end) / max_segment_length
     elif cost_func == 'distance':
-        return get_distance_apart(start, end) * 0.25
+        return get_distance_apart(start, end)
     elif cost_func =='time':
-        return (get_distance_apart(start, end) * 0.25) / max_speed
+        return (get_distance_apart(start, end)) / max_speed
     elif cost_func == 'cycling':
         return get_distance_apart(start, end) * 0.000001 * max_speed
+
+def dist_from_neighbors(start, end, cost_func):
+    neighbor_lats, neighbor_longs = avg_neighbors(start)
+    if end in cities_have_gps and neighbor_lats and neighbor_longs:
+        end_lat_long = [coords for coords in gps_data if coords[0] in end]
+        end_lat = float(end_lat_long[0][1])
+        end_long = float(end_lat_long[0][2])
+        sp_dist = spherical_dist_calc(neighbor_lats, neighbor_longs, end_lat, end_long)
+    else:
+        sp_dist = shortest_dist
+    if cost_func == 'segments':
+        return sp_dist / max_segment_length
+    elif cost_func == 'distance':
+        return sp_dist
+    elif cost_func =='time':
+        return sp_dist / max_speed
+    elif cost_func == 'cycling':
+        return sp_dist * 0.000001 * max_speed
+
+def avg_neighbors(start):
+    match_first = [city[1] for city in road_segs if city[0] in start]
+    match_second = [city[0] for city in road_segs if city[1] in start]
+    cities_list = match_first + match_second
+    lats = [float(d[1]) for d in gps_data if d[0] in cities_list]
+    longs = [float(d[2]) for d in gps_data if d[0] in cities_list]
+    if len(lats) == 0 or len(longs) == 0:
+        avg_lat = False
+        avg_long = False
+    else:
+        avg_lat = sum(lats) / len(lats)
+        avg_long = sum(longs) / len(longs)
+    return avg_lat, avg_long        
 
 #loads edge data
 def load_data(file_name):
@@ -169,9 +201,9 @@ def solve(route_params):
             visited.append(curr_city)
             for succ in successors(curr_city):
                 cost_so_far = calc_cost([curr_city, succ[0]], cost_function) + cost
-                #print((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
-                #fringe.put((cost_so_far, (succ[0], route_so_far + [succ[0]], cost_so_far)))
-                fringe.put((cost_so_far + hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), (succ[0], route_so_far + [succ[0]], cost_so_far)))
+                dist_n = dist_from_neighbors(succ[0], end_city, cost_function)
+                huer = min(hueristic(succ[0], end_city, route_so_far + [succ[0]], cost_function), dist_n)
+                fringe.put((cost_so_far + huer, (succ[0], route_so_far + [succ[0]], cost_so_far)))
     return False
 
 
