@@ -1,4 +1,4 @@
-import assign
+from assign import get_group_names
 
 labs = ['djcran', 'sahmaini', 'sulagaop', 'fanjun', 'nthakurd', 'vkvats']   
 group =   [[1,0,0,0,1,1],
