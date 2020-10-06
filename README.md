@@ -22,8 +22,24 @@ For a given state, the successor function finds all of the cities or road inters
 
 ### Distance Edge Weight
 
-This weight is retrieved by looking at the distance number for each segment in the road-segments.txt file.
+This weight is retrieved by using the distance number for each segment in the road-segments.txt file.
 
 ### Time Edge Weight
+
+Time edge weight uses the distance egde weight divided by the speed limit found in the road-segments.txt file, plus 5
+
+### Segments Edge Weight
+
+For this edge weight, all edges are weighted the same, and are given a weight of 1.
+
+### Cycling Edge Weight
+
+The cycling edge weight uses the speed for the road segment in road-segments.txt file, multiplied by 0.000001. This weight is then multiplied by the length of the road segment.
+
+## Goal State
+
+The goal state is the destination city supplied by the user. Also the goal state should be accompanied by the route that minimizes the cost function suggested 
+
+## Hueristics
 
 
