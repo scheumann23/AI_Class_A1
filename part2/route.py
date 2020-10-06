@@ -9,9 +9,8 @@
 from queue import PriorityQueue
 import sys
 from math import sin, cos, sqrt, atan2, radians
-import time
 
-# chooses which cost function to use
+# chooses which cost function to use to calculate cost
 def calc_cost(route, cost_func):
     if cost_func == 'segments':
         return segments_cost(route)
@@ -33,6 +32,9 @@ def hueristic(start, end, route, cost_func):
     elif cost_func == 'cycling':
         return get_distance_apart(start, end) * 0.000001 * max_speed
 
+# Calculates the average lat and long of all neighbors to start state
+# Then uses that average lat and long to get the spherical distance
+# To the end state
 def dist_from_neighbors(start, end, cost_func):
     neighbor_lats, neighbor_longs = avg_neighbors(start)
     if end in cities_have_gps and neighbor_lats and neighbor_longs:
@@ -51,6 +53,7 @@ def dist_from_neighbors(start, end, cost_func):
     elif cost_func == 'cycling':
         return sp_dist * 0.000001 * max_speed
 
+# Averages lat and long of all neighbors
 def avg_neighbors(start):
     match_first = [city[1] for city in road_segs if city[0] in start]
     match_second = [city[0] for city in road_segs if city[1] in start]
@@ -65,7 +68,7 @@ def avg_neighbors(start):
         avg_long = sum(longs) / len(longs)
     return avg_lat, avg_long        
 
-#loads edge data
+# Loads edge data
 def load_data(file_name):
     data_list = []
     with open(file_name, 'r') as file:
@@ -73,6 +76,7 @@ def load_data(file_name):
             data_list.append(tuple(line.split()))
     return data_list
 
+#Gets a list of unique cities in the road_segments file
 def city_list():
     return set([city[0] for city in road_segs] + [city[1] for city in road_segs])
   
@@ -140,6 +144,9 @@ def get_shortest_leg(state):
     match_second = [city[2] for city in road_segs if city[1] in state]
     return float(min(match_first + match_second))
 
+# Get distance apart of two cities using spherical distance
+# If the spherical distance is larger than the the largest segments length
+# It returns the shortest leg off the goal state
 def get_distance_apart(start, end):
     if start in cities_have_gps and end in cities_have_gps:
         start_lat_long = [coords for coords in gps_data if coords[0] in start]
@@ -173,15 +180,27 @@ def spherical_dist_calc(lat1, lon1, lat2, lon2):
     return distance
 #End Copy
 
-# return a list of possible successor states
+# Return a list of possible successor states
 def successors(state):
     match_first = [tuple(city[1:4]) for city in road_segs if city[0] == state]
     match_second = [tuple([city[0], city[2], city[3]]) for city in road_segs if city[1] == state]
     return match_first + match_second
 
-# check if we've reached the goal
+# Check if we've reached the goal
 def is_goal(current_city, end_city):
     return current_city == end_city 
+
+# Returns the longest road segment length in the text file
+def get_max_seg_len():
+    seg_lengths = [int(road_data[2]) for road_data in road_segs]
+    seg_lengths.sort()
+    return seg_lengths[-1]    
+
+# Returns the fastest speed in the road segment length
+def get_max_speed():
+    speeds = [int(road_data[3]) for road_data in road_segs]
+    speeds.sort()
+    return speeds[-1]
 
 # The solver! - using A*
 def solve(route_params):
@@ -208,7 +227,8 @@ def solve(route_params):
 
 
 if __name__ == "__main__":
-    t0 = time.time()
+    
+    ### Error handling of command line inputs ###
     if(len(sys.argv) != 4):
         raise(Exception("Error: Expected start city, end city, and cost function. No Spaces in Arguments!"))
         
@@ -217,34 +237,39 @@ if __name__ == "__main__":
 
     if(sys.argv[1] == sys.argv[2]):
         raise(Exception("Error: Start and End points can not be the same"))
-         
-    start_state = tuple(sys.argv[1:])  
     
-    #Preprocess data
+    ### Load data ###
     road_segs = load_data('road-segments.txt')
     gps_data = load_data('city-gps.txt')
+    
+    ### Preprocess Data ###
     cities = city_list()
+    
+    # Check if either start or end city are not in road segment list
     if sys.argv[1] not in cities:
         raise(Exception('Error: \'{}\' not in list of road segments'.format(sys.argv[1])))
+        
     if sys.argv[2] not in cities:
         raise(Exception('Error: \'{}\' not in list of road segments'.format(sys.argv[2])))
-    #Get list of cities in gps_data for faster processing
+        
+    # Get list of cities in gps_data for faster processing
     cities_have_gps = [city[0] for city in gps_data]
-    #Get the shortest road coming from destination city
+    
+    # Get the shortest road coming from destination city
     shortest_dist = get_shortest_leg(sys.argv[2])
-    seg_lengths = [int(road_data[2]) for road_data in road_segs]
-    seg_lengths.sort()
-    max_segment_length = seg_lengths[-1]
-    speeds = [int(road_data[3]) for road_data in road_segs]
-    speeds.sort()
-    max_speed = speeds[-1]
+    
+    # Get the longest road segment length in the road segment file
+    max_segment_length = get_max_seg_len()
+    
+    # Get max speed in road segment file
+    max_speed = get_max_speed()
+    
+    ### Find the best route using A*
     print("Solving...")
-    route = solve(tuple(start_state))
+    route = solve(tuple(sys.argv[1:]))
     if route:
         print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), ' ', end='')
         for city in route:
             print(city, ' ', end = '')
     else:
         print("No viable route between start and end cities")
-
-    print('\n', time.time()-t0)
