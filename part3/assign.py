@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 import numpy as np
-
+import time
 
 def create_want_matrix(prefs):
     labels = [people[0] for people in prefs]
@@ -75,3 +75,31 @@ def total_grading_time(pairings, wants, dont_wants, group_size_pref, k, m, n):
     wrong_sizes = compare_group_sizes(group_size_pref, group_sizes(pairings))
     num_teams = count_of_teams(group_sizes(pairings))
     return (num_teams * k) + (bad_pairs * m) + (missed_pairs * n) + wrong_sizes
+
+def print_groups(names_ind, labs):
+    str_names = ''
+    for name in names_ind:
+        for i, index in enumerate(name):
+            if len(name) == i + 1:
+                str_names += labs[index]
+            else:
+                str_names += labs[index] + '-'
+        print()
+        str_names += '\n'
+    return str_names
+
+#Gets group names in human readable format    
+def get_group_names(group_grid, labels):
+    str_names = ''
+    if type(group_grid) != 'numpy.ndarray':
+        group_grid = np.array(group_grid)
+    unique_groups = np.unique(group_grid, axis = 0)
+    name_index = [list(ind[0]) for ind in [np.where(team == 1) for team in unique_groups]]
+    for name in name_index:
+        for i, index in enumerate(name):
+            if len(name) == i + 1:
+                str_names += labels[index]
+            else:
+                str_names += labels[index] + '-'
+        str_names += '\n'
+    return str_names
