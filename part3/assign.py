@@ -219,27 +219,27 @@ def solve(pairings, wants, dont_wants, group_size_pref, k, m, n):
             if unhappy_person_vec[i] == 0:
                 new_pairings = swap_people(pairings, most_unhappy_person, i)
                 if total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n) < cost:
-                    possible_soultion = new_pairings
+                    possible_solution = new_pairings
                     cost = total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n)
                     print(get_group_names(possible_solution,labels), cost)
         ## try moving the person to a team of two
         for move in possible_moves_double(pairings, most_unhappy_person):
             new_pairings = move_person_double(pairings, most_unhappy_person, move)
             if total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n) < cost:
-                possible_soultion = new_pairings
+                possible_solution = new_pairings
                 cost = total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n)
                 print(get_group_names(possible_solution,labels), cost)
         ## try moving the person to a team of one
         for move in possible_moves_single(pairings, most_unhappy_person):
             new_pairings = move_person_single(pairings, most_unhappy_person, move)
             if total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n) < cost:
-                possible_soultion = new_pairings
+                possible_solution = new_pairings
                 cost = total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n)
                 print(get_group_names(possible_solution,labels), cost)
         ## try creating a new team (team of one) for this person
         new_pairings = create_new_team(pairings, most_unhappy_person)
         if total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n) < cost:
-            possible_soultion = new_pairings
+            possible_solution = new_pairings
             cost = total_grading_time(new_pairings, wants, dont_wants, group_size_pref, k, m, n)
             print(get_group_names(possible_solution,labels), cost)
         ## set up everything for the next loop
@@ -247,28 +247,23 @@ def solve(pairings, wants, dont_wants, group_size_pref, k, m, n):
             unhappy_people = [most_unhappy_person]
         else:
             unhappy_people.append(most_unhappy_person)
-        pairings = possible_soultion
+        pairings = possible_solution
         i+=1
 
 
 if __name__ == "__main__":
     data_file = sys.argv[1]
-    k = sys.argv[2]
-    m = sys.argv[3]
-    n = sys.argv[4]
+    k = int(sys.argv[2])
+    m = int(sys.argv[3])
+    n = int(sys.argv[4])
 
     data = load_data(data_file)
 
     labels = [people[0] for people in data]
-    print(labels)
     initial_state = create_initial_state(data)
-    print(initial_state)
     wants = create_want_matrix(data)
-    print(wants)
     dont_wants = create_dont_want_matrix(data)
-    print(dont_wants)
     sizes = group_size_vector(data)
-    print(sizes)
 
     print("Solving...")
     solve(initial_state, wants, dont_wants, sizes, k, m, n)
