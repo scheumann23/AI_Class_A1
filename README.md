@@ -73,7 +73,7 @@ Haversine formula:
 Where:  
 <img src="https://render.githubusercontent.com/render/math?math=lat_1, lat_2, long_1, long_2"> are the lattitude and longitude of the start and end points in the calculation.
 
-<img src="https://render.githubusercontent.com/render/math?math={lat_rad}_1 = radians(lat_1)">
+<img src="https://render.githubusercontent.com/render/math?math={latrad}_1 = radians(lat_1)">
 
 
 
