@@ -73,7 +73,17 @@ Haversine formula:
 Where:  
 <img src="https://render.githubusercontent.com/render/math?math=lat_1, lat_2, long_1, long_2"> are the lattitude and longitude of the start and end points in the calculation.
 
-<img src="https://render.githubusercontent.com/render/math?math={latrad}_1 = radians(lat_1)">
+and
+
+<img src="https://render.githubusercontent.com/render/math?math=latrad_1 = radians(lat_1)">
+<img src="https://render.githubusercontent.com/render/math?math=latrad_2 = radians(lat_2)">
+<img src="https://render.githubusercontent.com/render/math?math=longrad_1 = radians(lat_1)">
+<img src="https://render.githubusercontent.com/render/math?math=longrad_2 = radians(lat_2)">
+<img src="https://render.githubusercontent.com/render/math?math=dlat = latgrad_2 - latgrad_1">
+<img src="https://render.githubusercontent.com/render/math?math=dlong = longrad_2 - longrad_1">
+<img src="https://render.githubusercontent.com/render/math?math=R = radius in miles = 3956">
+
+<img src="https://render.githubusercontent.com/render/math?math=haversine = R * 2*arctan(\frac{(sin(\frac{dlat}{2})^2 + cos(latrad_1) * cos(latrad_2) * sin(\frac{dlon}{2})^2)}{\sqrt{1 - (sin(\frac{dlat}{2})^2 + cos(latrad_1) * cos(latrad_2) * sin(\frac{dlon}{2})^2)}}">
 
 
 
