@@ -117,10 +117,12 @@ The algoritm is an A* search algorithm, that uses the hueristic that was previou
 
 The fringe includes the current city explored, route so far, and cost so far of the route. When a state is explored for sucessors, it is checked that the sucessors are not in the list of visited states before adding it to the fringe. 
 
+## Discussion of Issues
 
+The implementation of an A* search was not overly difficult, but the difficulties came when realizing that a seemingly admissible hueristic was returning overestimates. As discussed in the section about adjusting the hueristic, we are taking 75% of the distance calculated instead of 100%. We are assuming that this is enough based on many tests, but it is possible that we might have to reduce the distance further to get correct routes.
 
 #References
 
-[1] https://en.wikipedia.org/wiki/Haversine_formula
+[1] https://en.wikipedia.org/wiki/Haversine_formula  
 [2] https://stackoverflow.com/questions/19412462/getting-distance-between-two-points-based-on-latitude-longitude
 
