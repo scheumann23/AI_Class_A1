@@ -24,13 +24,13 @@ def calc_cost(route, cost_func):
 # chooses the hueristic based on input parameters
 def hueristic(start, end, route, cost_func):
     if cost_func == 'segments':
-        return get_distance_apart(start, end) / max_segment_length
+        return (get_distance_apart(start, end) * 0.75) / max_segment_length
     elif cost_func == 'distance':
-        return get_distance_apart(start, end)
+        return (get_distance_apart(start, end) * 0.75)
     elif cost_func =='time':
-        return (get_distance_apart(start, end)) / (max_speed + 5)
+        return (get_distance_apart(start, end) * 0.75) / (max_speed + 5)
     elif cost_func == 'cycling':
-        return get_distance_apart(start, end) * 0.000001 * (max_speed + 5)
+        return (get_distance_apart(start, end) * 0.75) * 0.000001 * (max_speed + 5)
 
 # Calculates the average lat and long of all neighbors to start state
 # Then uses that average lat and long to get the spherical distance
