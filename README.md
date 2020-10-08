@@ -62,4 +62,25 @@ The goal state is the destination city supplied by the user. Also the goal state
 
 ## Hueristics
 
+### GPS Distance
+
+In the file city-gps.txt, there are many cities GPS locations in lattitude and longitude. This file does not contain all locations for all the end points in road-segments.txt.
+
+The hueristic calculates the distance between the current state, and the goal state. As the locations are in lattitude and longitude, the euclidean distance gives a distance in degrees, that is not very useful when estimating the distance in miles. Also, as we are dealing with two points on a sphere, euclidean distance is not the best estimate. To remedy both of these problems, a calculation can be made to calculate arc length between two points given the radius of the sphere (Earth). The formula for this calculation is called the Haversine formula and is primarily used for navigation [1]. We found a python function that calculates the Haversine distance, which is used in the code [2].
+
+Haversine formula: 
+
+Where:
+lat_1, lat_2, long_1, and long_2
+
+lat_rad_1 = radians(
+
+
+
+
+
+#References
+
+[1] https://en.wikipedia.org/wiki/Haversine_formula
+[2] https://stackoverflow.com/questions/19412462/getting-distance-between-two-points-based-on-latitude-longitude
 
