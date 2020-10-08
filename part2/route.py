@@ -28,7 +28,7 @@ def hueristic(start, end, route, cost_func):
     elif cost_func == 'distance':
         return get_distance_apart(start, end)
     elif cost_func =='time':
-        return (get_distance_apart(start, end)) / max_speed
+        return (get_distance_apart(start, end)) / (max_speed + 5)
     elif cost_func == 'cycling':
         return get_distance_apart(start, end) * 0.000001 * max_speed
 
@@ -49,7 +49,7 @@ def dist_from_neighbors(start, end, cost_func):
     elif cost_func == 'distance':
         return sp_dist
     elif cost_func =='time':
-        return sp_dist / max_speed
+        return sp_dist / (max_speed + 5)
     elif cost_func == 'cycling':
         return sp_dist * 0.000001 * max_speed
 
