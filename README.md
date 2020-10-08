@@ -70,9 +70,10 @@ The hueristic calculates the distance between the current state, and the goal st
 
 Haversine formula: 
 
-Where:
-<img src="https://render.githubusercontent.com/render/math?math=lat_1, lat_2, long_1, and long_2">  
-lat_1, lat_2, long_1, and long_2
+Where:  
+<img src="https://render.githubusercontent.com/render/math?math=lat_1, lat_2, long_1, long_2"> are the lattitude and longitude of the start and end points in the calculation.
+
+
 
 lat_rad_1 = radians(
 
