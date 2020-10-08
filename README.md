@@ -62,7 +62,7 @@ The goal state is the destination city supplied by the user. Also the goal state
 
 ## Hueristics
 
-### GPS Distance
+### GPS Distance Only
 
 In the file city-gps.txt, there are many cities GPS locations in lattitude and longitude. This file does not contain all locations for all the end points in road-segments.txt.
 
@@ -85,12 +85,44 @@ and
 
 <img src="https://render.githubusercontent.com/render/math?math=haversine = R * 2*arctan(\frac{(sin(\frac{dlat}{2})^2 + cos(latrad_1) * cos(latrad_2) * sin(\frac{dlon}{2})^2)}{\sqrt{1 - (sin(\frac{dlat}{2})^2 + cos(latrad_1) * cos(latrad_2) * sin(\frac{dlon}{2})^2)}}">
 
+In the case that the current city does not have a GPS coordinate, then the hueristic finds all the road segments attached to the goal city, and uses the minimum segment length.
 
+#### Modifications for various costs
 
+As there are four cost functions, this distance discussed above needs to be adjusted to match the cost function being used. For the distance cost, there are no adjustments. When the cost is the number of segments, the haversine distance is divided by the largest segment length found in the road-segments.txt file. If the cost function is time, then the haversine distance is divided by the fastest speed in the road-segments.txt file plus 5. Lastly, the cycling hueristic uses the haversine distance times 0.000001 times the max possible speed plus 5.
 
+#### Why this hueristic is admissible
 
-#References
+With accurate data, this hueristic alone is admissible because this distance would be if there were a strait road between two cities with no turns or elevation changes. This is the shortest distance between two points. If there were turns or elevation changes, then the driving distance would be greater than the computed distance.
 
-[1] https://en.wikipedia.org/wiki/Haversine_formula
+If there is no GPS, when using the shortest segment leg attached to the goal city, this is also admissible. The reason this cannot overestimate the cost, is because if the current city is the city right next to the goal city, then the shortest cost can only be the shortest distance connected to the goal. 
+
+#### Why this hueristic still sometimes overestimates
+
+While in theory, the hueristic explained should never overestimate, due to the data given sometimes it overestimates. For example, the GPS coordinate for Lakes District, Washington is actually a coordinate in the state of West Virginia. Due to being across the country from where it is supposed to be, this greatly over estimates the distance. 
+
+Not all of the discrepancies in the data are so greatly exaggerated, but even slight overestimates could result in getting sub-optmial routes. There are many cases where the straight line distance between two cities is larger than the segment of road connecting the two cities. 
+
+#### Adjustments to the Hueristic to make it admissible, and a better estimate, despite the inconsistent data
+
+There is a check to see if any hueristic calculated is longer than the largest segment, then the hueristic uses the shortest segment length connected to the goal city.
+
+After some testing, we also found that multiplying the distance by 0.75 would still allow the distance to be an underestimate, while still getting as close to the true distance as possible.
+
+Lastly, we implemented a second function that averages the lattitudes and longitudes of all of the neighbors of the starting city. Then this averaged GPS coordinate is used to calculated the haversine distance to the goal. This could help in the case in which there is no GPS, then this could try to estimate the location of the current city or interchange. This calculation could be not admissible, to combat this, the hueristic value used is the minimum between this averaged lattitude and longitude and the actual lattitude and longitude.
+
+## Explanation of Search Algorithm
+
+The algoritm is an A* search algorithm, that uses the hueristic that was previously discussed. The fringe used is a priority queue that uses a priority which is the current cost (based on the given cost variable supplied by the user) plus the hueristic. The current state is gained by popping the city in the fringe with the lowest priority calculation.
+
+The fringe includes the current city explored, route so far, and cost so far of the route. When a state is explored for sucessors, it is checked that the sucessors are not in the list of visited states before adding it to the fringe. 
+
+## Discussion of Issues
+
+The implementation of an A* search was not overly difficult, but the difficulties came when realizing that a seemingly admissible hueristic was returning overestimates. As discussed in the section about adjusting the hueristic, we are taking 75% of the distance calculated instead of 100%. We are assuming that this is enough based on many tests, but it is possible that we might have to reduce the distance further to get correct routes.
+
+# References
+
+[1] https://en.wikipedia.org/wiki/Haversine_formula  
 [2] https://stackoverflow.com/questions/19412462/getting-distance-between-two-points-based-on-latitude-longitude
 
