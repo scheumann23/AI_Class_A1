@@ -121,6 +121,27 @@ The fringe includes the current city explored, route so far, and cost so far of 
 
 The implementation of an A* search was not overly difficult, but the difficulties came when realizing that a seemingly admissible hueristic was returning overestimates. As discussed in the section about adjusting the hueristic, we are taking 75% of the distance calculated instead of 100%. We are assuming that this is enough based on many tests, but it is possible that we might have to reduce the distance further to get correct routes.
 
+
+# Part 3: Choosing Teams
+
+## Description of Search Problem
+We decided to use lcoal search to solve this problem. 
+### State Space
+The state space for this problem is all of the possible pairings of students into groups of either either 1, 2 or 3.
+### Initial State
+The initial state semi-randomly pairs up each student into a group of three until the final 1, 2, or 3 students who also get paired up. This initial state minimizes the time grading becuase the number of teams is as small as possible.
+### Successor function
+The successor function returns possible boards with either two students that have had their teams swapped, a person being added to a team of 2, a person being added to a team of 1, or a person being split off from their team to form a new team.
+
+## How the search algorithm works
+After choosing the initial set of groups, the one person that is contributing the most to the most cost, aka the "most unhappy person" (MUP) is determined. The algorithm then tries each of 4 basic moves. It starts by swapping the MUP with every other person that isn't in their group and checks to see if the total cost of the new set of groups is less than that for the existing set of groups. If the cost is lower, the new groups and their cost is saved. It then moves on and tries to add the MUP to the a group of 2, a group of 1, or a group of 0 (aka forms a new group). If at any time a better solution (lower cost) is found, the groupings and the cost replace the current best grouping/cost. Once every possible move for that individual is checked, a new MUP is determined and the process repeats. The search will stop if every person has had a chance to be the MUP and yet the cost has not decreased. This would mean that there is not a unilateral move that could improve the overall cost.
+
+## Potential issues
+Because the search gets called off after singular moves prove unfruitful, I have a feeling that the algorithm might get caught in a trap of a local minimum and never actually reach the global minimum. One potential thing to add would be a monte carlo element to purposefully choose worse states a small fraction of the time. Another potntial improvement would be to pick a more informed initial state as opposed to picking one randomly. For larger boards that can take a while to run, this might help shorten the length of time to find the solution. 
+
+
+
+
 # References
 
 [1] https://en.wikipedia.org/wiki/Haversine_formula  
