@@ -268,9 +268,9 @@ if __name__ == "__main__":
     print("Solving...")
     route = solve(tuple(sys.argv[1:]))
     if route:
-        print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), ' ', end='')
+        print(segments_cost(route), distance_cost(route), time_cost(route), cycling_cost(route), end=' ')
         for city in route:
-            print(city, ' ', end = '')
+            print(city, ' ',sep = '', end = '')
         print()
     else:
         print("No viable route between start and end cities")
